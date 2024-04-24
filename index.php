@@ -62,13 +62,22 @@ $resultado_select = $select_prepare->fetch();
                     <option value="pendiente">Pendiente</option>
                     <option value="ejecucion">Ejecución</option>
                     <option value="finalizada">Finalizada</option>
-
                 </select>
             </div>
 
             <button type="submit" name="insertar" class="btn btn-primary">Crear tarea</button>
+            <button type="reset" class="col btn btn-danger">Reset</button>
 
-
+            <?php 
+            if(isset($_GET['insertar'])){
+                $nombre = $_GET['nombre'];
+                $descripcion = $_GET['descripcion'];
+                $estado = $_GET['estado'];
+            
+                echo "$nombre", "$descripcion", "$estado";
+            }
+            
+            ?>
 
     </main>
 
