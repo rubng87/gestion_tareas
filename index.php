@@ -1,17 +1,16 @@
 <?php
 
 include_once "connection.php";
-include_once "colores.php";
+// include_once "colores.php";
 
-
-// $colores = ["darkblue"=>"azul", "darkred"=>"rojo", "darkgreen"=>"verde", "orange"=>"naranja"];
+$estado = ["urgente" => "blue", "pendiente" => "red", "ejecucion" => "orange", "finalizada" => "green"];
 
 $select = "SELECT * FROM tareas";
 
 $select_prepare = $conn->prepare($select);
 $select_prepare->execute();
 
-$resultado_select = $select_prepare->fetchAll();
+$resultado_select = $select_prepare->fetch();
 
 // print_r($resultado_select);
 
@@ -19,27 +18,13 @@ $resultado_select = $select_prepare->fetchAll();
 //     echo $value["color"]. "<br>";
 // }
 
-if ($_POST) {
-
-    var_dump($_POST);
-
-    $tarea = $_POST["tarea"];
-    $titulo = $_POST["titulo"];
-    $descripcion = $_POST["descripcion"];
-    
-
-    $insert = "INSERT INTO tareas (tarea, titulo, descripcion) VALUES (?,?,?)";
-    $insert_prepare = $conn->prepare($insert);
-    $insert_prepare->execute([$tarea, $titulo, $descripcion]);
-
-    $insert_prepare = null;
-    $conn = null;
-
-    header('location:index.php');
-}
-
+// 
 
 ?>
+
+
+
+
 
 
 <!DOCTYPE html>
@@ -48,7 +33,7 @@ if ($_POST) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>insertar nueva tarea</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -56,96 +41,36 @@ if ($_POST) {
 <body>
 
     <header>
-        <h1 class="text-center">Nuestros colores favoritos</h1>
+        <h1 class="text-center">Gestor de tareas</h1>
     </header>
 
     <main class="container my-5">
-        <div class="row gx-5">
-            <section class="col-sm-6 section1">
-                <?php foreach ($resultado_select as $row) : ?>
-                    <div class="row alert" style='color: white; background-color: <?= $row["color"] ?>'>
-                        <!-- <?php echo $row["usuario"] . " : " . $row["color"] ?> -->
-                        <div class="col-sm-9">
-                            <?= $row["usuario"] . " : " . $row["color_user"] ?>
-                        </div>
-                        <div class="col-sm-3 text-end">
-                            <a href="index.php?id=<?= $row["id"] ?>&usuario=<?=$row["usuario"] ?>&color=<?= $row["color"] ?>">✏️</a>
-                            <a href="delete.php?id=<?= $row["id"] ?>">🗑️</a>
+        <h2 class="text-center">Insertar nueva tarea</h2>
+        <form action="" method="GET">
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="nombre" name="nombre">
+            </div>
+            <div class="mb-3">
+                <label for="descripcion" class="form-label">Descripción</label>
+                <input type="text" class="form-control" id="descripcion" name="descripcion">
+            </div>
+            <div class="mb-3">
+                <label for="estado" class="form-label">Estado :</label>
+                <select name="estado" id="estado">
+                    <option value="urgente" selected>Urgente</option>
+                    <option value="pendiente">Pendiente</option>
+                    <option value="ejecucion">Ejecución</option>
+                    <option value="finalizada">Finalizada</option>
 
-                        </div>
+                </select>
+            </div>
 
-                    </div>
-
-                <?php endforeach ?>
-
-            </section>
-
-
-            <section class="col-sm-6 section2">
-
-                <?php if ($_GET) : ?>
-                    <form method="GET" action="update.php">
-                        <fieldset>
-                            <legend>Actualiza la información</legend>
-
-                            <div class="mb-3">
-                                <input type="hidden" name= "id" value='<?= $_GET['id']?>'>
-                                
-                                <label for="usuario" class="form-label">Usuario :</label>
-                                <input type="text" name="usuario" class="form-control" id="usuario" aria-describedby="usuario" value='<?= $_GET['usuario']?>'>
-                            </div>
-                            <div class="mb-3">
-                                <label for="color" class="form-label">Color preferido :</label>
-                                <select name="color" id="color">
-                                    <option value="darkblue" selected>Azul</option>
-                                    <option value="darkred">Rojo</option>
-                                    <option value="darkgreen">Verde</option>
-                                    <option value="orange">Naranja</option>
-                                </select>
-                            </div>
-                            <div class="row gap-3">
-                                <button type="submit" class="col btn btn-primary">Submit</button>
-                                <button type="reset" class="col btn btn-danger">Reset</button>
-                            </div>
-                            <div class="my-3"><p class="text-center">
-                                <a href="index.php">Cancelar</a</p></div>
-                        </fieldset>                       
-                    </form>
-                <?php endif ?>
-
-                <?php if (!$_GET) : ?>
-                    <form method="POST">
-                        <fieldset>
-                            <legend>Actualiza la información</legend>
-                            <div class="mb-3">
-                                <label for="usuario" class="form-label">Usuario :</label>
-                                <input type="text" name="usuario" class="form-control" id="usuario" aria-describedby="usuario">
-                            </div>
-                            <div class="mb-3">
-                                <label for="color" class="form-label">Color preferido :</label>
-                                <select name="color" id="color">
-                                    <option value="darkblue" selected>Azul</option>
-                                    <option value="darkred">Rojo</option>
-                                    <option value="darkgreen">Verde</option>
-                                    <option value="orange">Naranja</option>
-                                </select>
-                            </div>
-                            <div class="row gap-3">
-                                <button type="submit" class="col btn btn-primary">Submit</button>
-                                <button type="reset" class="col btn btn-danger">Reset</button>
-                            </div>
-                        </fieldset>
-                    </form>
-                <?php endif ?>
-
-            </section>
-        </div>
+            <button type="submit" name="insertar" class="btn btn-primary">Crear tarea</button>
 
 
 
     </main>
-
-
 
 </body>
 
